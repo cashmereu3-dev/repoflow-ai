@@ -9,7 +9,7 @@ export default async function AssignmentsPage() {
   const supabase = await createClient()
   const { data: assignments, error } = await supabase
     .from('assignments')
-    .select('*')
+    .select('*, borrower:borrowers(first_name, last_name), vehicle:vehicles(year, make, model)')
     .order('created_at', { ascending: false })
 
   return (
@@ -41,11 +41,17 @@ export default async function AssignmentsPage() {
             <tbody className="[&_tr:last-child]:border-0">
               {assignments?.map((item) => {
                 const assignment = item as any
+                const borrowerName = assignment.borrower 
+                  ? `${assignment.borrower.first_name} ${assignment.borrower.last_name}` 
+                  : 'N/A'
+                const vehicleDesc = assignment.vehicle
+                  ? `${assignment.vehicle.year} ${assignment.vehicle.make} ${assignment.vehicle.model}`
+                  : 'N/A'
                 return (
                 <tr key={assignment.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                   <td className="p-4 align-middle font-medium">{assignment.id.substring(0, 8)}...</td>
-                  <td className="p-4 align-middle">{assignment.borrower_name || 'N/A'}</td>
-                  <td className="p-4 align-middle">{assignment.vehicle_year} {assignment.vehicle_make} {assignment.vehicle_model}</td>
+                  <td className="p-4 align-middle">{borrowerName}</td>
+                  <td className="p-4 align-middle">{vehicleDesc}</td>
                   <td className="p-4 align-middle">
                     <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
                       assignment.status === 'completed' 

@@ -437,7 +437,7 @@ CREATE INDEX idx_payments_status ON payments(status);
 -- GPS EVENTS
 -- ============================================================
 CREATE TABLE gps_events (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID NOT NULL DEFAULT uuid_generate_v4(),
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   agent_id UUID NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
   assignment_id UUID REFERENCES assignments(id) ON DELETE SET NULL,
@@ -450,7 +450,8 @@ CREATE TABLE gps_events (
   heading DECIMAL(5, 2),
   address TEXT,
   
-  recorded_at TIMESTAMPTZ DEFAULT NOW()
+  recorded_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  PRIMARY KEY (id, recorded_at)
 ) PARTITION BY RANGE (recorded_at);
 
 CREATE TABLE gps_events_2026 PARTITION OF gps_events

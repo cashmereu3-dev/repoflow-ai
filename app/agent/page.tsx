@@ -1,31 +1,69 @@
+import { createClient } from '@/lib/supabase/server'
+import { MapPin, Target, TrendingUp, Upload, AlertCircle, LogOut } from 'lucide-react'
 import Link from 'next/link'
-import { MapPin, Target, TrendingUp, Upload, AlertCircle } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
-export default function AgentDashboardPage() {
-  // Mock data for the dashboard presentation
-  const stats = {
-    activeAssignments: 14,
-    nearbyTargets: 3,
-    recoveryRate: '82%',
+export const metadata = {
+  title: 'Agent Dashboard',
+}
+
+export default async function AgentDashboardPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login')
   }
 
-  const nearbyAssignments = [
-    { id: 'a1', distance: '1.2 mi', vehicle: '2020 Toyota Camry', vin: '...4F8A', address: '123 Main St, Sector A' },
-    { id: 'a2', distance: '2.8 mi', vehicle: '2021 Ford F-150', vin: '...9B2X', address: '456 Elm St, Sector B' },
-    { id: 'a3', distance: '4.5 mi', vehicle: '2019 Honda Accord', vin: '...7C1Y', address: '789 Oak St, Sector C' },
-  ]
+  // 1. Resolve agent record
+  const { data: agentData } = await supabase
+    .from('agents')
+    .select('id')
+    .eq('profile_id', user.id)
+    .single()
+
+  const agent = agentData as any
+
+  let assignments: any[] = []
+  if (agent) {
+    const { data } = await supabase
+      .from('assignments')
+      .select('*, vehicle:vehicles(*), borrower:borrowers(*)')
+      .eq('assigned_agent_id', agent.id)
+      .eq('is_archived', false)
+      .order('created_at', { ascending: false })
+    assignments = data || []
+  }
+
+  // 2. Calculate dynamic stats
+  const total = assignments.length
+  const activeCount = assignments.filter((a) => !['recovered', 'voluntary_surrender', 'closed'].includes(a.status)).length
+  const recoveredCount = assignments.filter((a) => ['recovered', 'voluntary_surrender'].includes(a.status)).length
+  const recoveryRate = total > 0 ? `${Math.round((recoveredCount / total) * 100)}%` : '0%'
+
+  // Get active targets (non-recovered/closed)
+  const activeAssignments = assignments.filter((a) => !['recovered', 'voluntary_surrender', 'closed'].includes(a.status))
 
   return (
-    <div className="p-4 space-y-6 max-w-md mx-auto">
+    <div className="p-4 space-y-6 max-w-md mx-auto min-h-screen pb-24">
       {/* Header */}
       <header className="py-2 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Agent Hub</h1>
           <p className="text-sm text-zinc-400">Stay safe out there.</p>
         </div>
-        <div className="bg-zinc-900 border border-zinc-800 p-2 rounded-full relative">
-          <AlertCircle className="h-5 w-5 text-zinc-300" />
-          <span className="absolute top-0 right-0 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-zinc-900"></span>
+        
+        <div className="flex items-center gap-2">
+          {/* Sign Out Button for Agent */}
+          <form action="/auth/signout" method="post">
+            <button 
+              type="submit" 
+              className="p-2 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800 text-zinc-400 hover:text-red-400 transition-colors"
+              title="Sign Out"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
+          </form>
         </div>
       </header>
 
@@ -36,14 +74,14 @@ export default function AgentDashboardPage() {
             <Target className="h-4 w-4 text-blue-400" />
             <span className="text-xs font-semibold uppercase tracking-wider">Active</span>
           </div>
-          <p className="text-3xl font-bold text-white">{stats.activeAssignments}</p>
+          <p className="text-3xl font-bold text-white">{activeCount}</p>
         </div>
         <div className="bg-zinc-900 rounded-xl p-4 border border-zinc-800 flex flex-col justify-between shadow-sm">
           <div className="flex items-center space-x-2 text-zinc-400 mb-3">
             <TrendingUp className="h-4 w-4 text-green-400" />
             <span className="text-xs font-semibold uppercase tracking-wider">Success</span>
           </div>
-          <p className="text-3xl font-bold text-white">{stats.recoveryRate}</p>
+          <p className="text-3xl font-bold text-white">{recoveryRate}</p>
         </div>
       </div>
 
@@ -67,41 +105,61 @@ export default function AgentDashboardPage() {
         </div>
       </div>
 
-      {/* Nearby Assignments */}
+      {/* Nearby/Active Assignments */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Nearby Targets</h2>
+          <h2 className="text-lg font-semibold text-white">Your Cases</h2>
           <span className="text-xs font-medium bg-zinc-800 text-zinc-300 px-2 py-1 rounded-full">
-            {stats.nearbyTargets} Found
+            {activeAssignments.length} Active
           </span>
         </div>
         
         <div className="space-y-3">
-          {nearbyAssignments.map((assignment) => (
-            <div key={assignment.id} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800 flex items-start space-x-4 shadow-sm">
-              <div className="bg-red-500/10 rounded-lg p-2 mt-0.5">
-                <MapPin className="h-5 w-5 text-red-400" />
+          {activeAssignments.map((assignment) => {
+            const vehicleDesc = assignment.vehicle 
+              ? `${assignment.vehicle.year} ${assignment.vehicle.make} ${assignment.vehicle.model}`
+              : 'Unknown Vehicle'
+            
+            return (
+              <div key={assignment.id} className="bg-zinc-900 rounded-xl p-4 border border-zinc-800 flex items-start space-x-4 shadow-sm">
+                <div className="bg-red-500/10 rounded-lg p-2 mt-0.5">
+                  <MapPin className="h-5 w-5 text-red-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start">
+                    <h3 className="font-semibold text-white truncate">{vehicleDesc}</h3>
+                  </div>
+                  <div className="flex items-center mt-1 space-x-2">
+                    <span className="text-xs text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded font-mono">
+                      VIN {assignment.vehicle?.vin?.substring(13) || 'N/A'}
+                    </span>
+                    <span className="text-xs text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded font-mono">
+                      {assignment.vehicle?.license_plate || 'No Plate'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-zinc-400 mt-2 truncate">
+                    {assignment.last_known_address || 'No location specified'}
+                  </p>
+                  
+                  <div className="mt-3 flex gap-2">
+                    <Link 
+                      href={`/agent/assignments`}
+                      className="flex-1 text-center bg-zinc-800 hover:bg-zinc-700 text-white text-xs py-2.5 rounded-md transition-colors font-semibold"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-white truncate">{assignment.vehicle}</h3>
-                  <span className="text-xs font-bold text-blue-400 whitespace-nowrap ml-2">{assignment.distance}</span>
-                </div>
-                <div className="flex items-center mt-0.5 space-x-2">
-                  <span className="text-xs text-zinc-500 bg-zinc-800 px-1.5 py-0.5 rounded font-mono">VIN {assignment.vin}</span>
-                </div>
-                <p className="text-sm text-zinc-400 mt-2 truncate">{assignment.address}</p>
-                <div className="mt-3 flex gap-2">
-                  <button className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white text-xs py-2 rounded-md transition-colors font-semibold">
-                    Details
-                  </button>
-                  <button className="flex-1 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 text-xs py-2 rounded-md transition-colors font-semibold border border-blue-900/30">
-                    Navigate
-                  </button>
-                </div>
-              </div>
+            )
+          })}
+
+          {activeAssignments.length === 0 && (
+            <div className="py-8 text-center bg-zinc-900 rounded-xl border border-zinc-800 text-zinc-500">
+              <AlertCircle className="w-8 h-8 mx-auto mb-2 text-zinc-600" />
+              <p className="text-sm">No active assignments assigned to you.</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>

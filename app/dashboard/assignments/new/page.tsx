@@ -27,26 +27,132 @@ export default function NewAssignmentPage() {
     setLoading(true)
     setErrorMsg('')
     
-    const payload: any = {
-      borrower_name: formData.borrower_name,
-      vehicle_make: formData.vehicle_make,
-      vehicle_model: formData.vehicle_model,
-      vehicle_year: parseInt(formData.vehicle_year) || null,
-      vin: formData.vin,
-      loan_balance: parseFloat(formData.loan_balance) || null,
-      status: 'pending',
-    }
-    // @ts-ignore
-    const { error } = await supabase.from('assignments').insert([payload])
+    try {
+      // 1. Get authenticated user
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        throw new Error('Authentication required. Please log in again.')
+      }
 
-    setLoading(false)
+      // 2. Fetch user's profile to resolve organization_id
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('organization_id')
+        .eq('id', user.id)
+        .single()
+      
+      const profile = profileData as any
+      if (profileError || !profile?.organization_id) {
+        throw new Error('Could not resolve your organization. Please contact support.')
+      }
 
-    if (error) {
-      console.error('Error creating assignment:', error)
-      setErrorMsg('Failed to create assignment. Please try again.')
-    } else {
+      const orgId = profile.organization_id
+      const userId = user.id
+
+      // 3. Check/Insert Vehicle
+      let vehicleId = ''
+      const { data: existingVehicleData } = await supabase
+        .from('vehicles')
+        .select('id')
+        .eq('vin', formData.vin)
+        .eq('organization_id', orgId)
+        .maybeSingle()
+
+      const existingVehicle = existingVehicleData as any
+
+      if (existingVehicle) {
+        vehicleId = existingVehicle.id
+      } else {
+        const { data: newVehicleData, error: vehicleErr } = await (supabase.from('vehicles') as any)
+          .insert({
+            organization_id: orgId,
+            vin: formData.vin,
+            year: parseInt(formData.vehicle_year) || null,
+            make: formData.vehicle_make,
+            model: formData.vehicle_model
+          })
+          .select('id')
+          .single()
+
+        const newVehicle = newVehicleData as any
+        if (vehicleErr) {
+          throw new Error(`Vehicle error: ${vehicleErr.message}`)
+        }
+        vehicleId = newVehicle.id
+      }
+
+      // 4. Insert Borrower
+      const nameParts = formData.borrower_name.trim().split(/\s+/)
+      const firstName = nameParts[0] || 'Unknown'
+      const lastName = nameParts.slice(1).join(' ') || 'Borrower'
+
+      const { data: newBorrowerData, error: borrowerErr } = await (supabase.from('borrowers') as any)
+        .insert({
+          organization_id: orgId,
+          first_name: firstName,
+          last_name: lastName
+        })
+        .select('id')
+        .single()
+
+      const newBorrower = newBorrowerData as any
+      if (borrowerErr) {
+        throw new Error(`Borrower error: ${borrowerErr.message}`)
+      }
+      const borrowerId = newBorrower.id
+
+      // 5. Fetch AI Recovery Probability Score
+      let score = 50
+      let factors = {}
+      try {
+        const scoreRes = await fetch('/api/ai/score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            vehicle: {
+              make: formData.vehicle_make,
+              model: formData.vehicle_model,
+              year: parseInt(formData.vehicle_year) || null
+            },
+            loan_balance: parseFloat(formData.loan_balance) || null
+          })
+        })
+        if (scoreRes.ok) {
+          const scoreData = await scoreRes.json()
+          if (scoreData.data) {
+            score = scoreData.data.score || 50
+            factors = scoreData.data.factors || {}
+          }
+        }
+      } catch (scoreErr) {
+        console.warn('Failed to fetch AI score, defaulting to 50:', scoreErr)
+      }
+
+      // 6. Create Assignment with status 'new'
+      const { error: assignmentError } = await (supabase.from('assignments') as any)
+        .insert({
+          organization_id: orgId,
+          borrower_id: borrowerId,
+          vehicle_id: vehicleId,
+          created_by: userId,
+          status: 'new',
+          loan_balance: parseFloat(formData.loan_balance) || null,
+          recovery_probability: score,
+          recovery_probability_factors: factors,
+          due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 30 days default
+        })
+
+      if (assignmentError) {
+        throw new Error(`Assignment error: ${assignmentError.message}`)
+      }
+
       router.push('/dashboard/assignments')
       router.refresh()
+    } catch (err: any) {
+      console.error('Error creating assignment workflow:', err)
+      setErrorMsg(err.message || 'Failed to create assignment. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 

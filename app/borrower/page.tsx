@@ -2,18 +2,34 @@ import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { AlertCircle, Calendar, CreditCard, MessageSquare, ShieldAlert } from 'lucide-react'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 
 export default async function BorrowerDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // In a real app, we would query the borrower record linked to this profile
-  // For this implementation, we'll fetch assignments directly if they're linked
-  const { data: assignments } = await supabase
-    .from('assignments')
-    .select('*, vehicle:vehicles(*), lender:organizations(name, logo_url)')
-    // .eq('borrower_id', borrowerId) - assuming RLS policies handle this
-    .limit(1)
+  if (!user) {
+    redirect('/login')
+  }
+
+  // Query the borrower record linked to this authenticated profile
+  const { data: borrowerData } = await supabase
+    .from('borrowers')
+    .select('id')
+    .eq('profile_id', user.id)
+    .single()
+
+  const borrower = borrowerData as any
+
+  let assignments = null
+  if (borrower) {
+    const { data: assignmentsData } = await supabase
+      .from('assignments')
+      .select('*, vehicle:vehicles(*), lender:organizations(name, logo_url)')
+      .eq('borrower_id', borrower.id)
+      .limit(1)
+    assignments = assignmentsData as any[]
+  }
 
   const assignment = assignments?.[0]
 

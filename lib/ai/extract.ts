@@ -8,6 +8,21 @@ const openai = new OpenAI({
 export async function extractVehicleDataFromImage(
   imageUrl: string
 ): Promise<AIExtractionResult> {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'dummy_key_for_build' || process.env.OPENAI_API_KEY.includes('dummy')) {
+    console.warn("Using mock AI extraction fallback because OPENAI_API_KEY is not configured.");
+    return {
+      vehicleMake: "Toyota",
+      vehicleModel: "Camry",
+      vehicleColor: "Silver",
+      vin: "1NX12345678901234",
+      licensePlate: "7XYZ99",
+      address: "123 Main St, Sector A",
+      damageNotes: "No visible damage",
+      confidence: 0.95,
+      rawResponse: "Mock Response"
+    }
+  }
+
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',

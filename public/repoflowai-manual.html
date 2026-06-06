@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RepoFlow AI – Product Manual & Feature Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: #111;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── COVER PAGE ── */
+    .cover {
+      width: 100%;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 40%, #16213e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 40px;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+      top: -100px; left: -100px;
+    }
+
+    .cover::after {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%);
+      bottom: -80px; right: -80px;
+    }
+
+    .cover-logo {
+      font-size: 48px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -2px;
+      margin-bottom: 8px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-logo span { color: #6366f1; }
+    .cover-tagline {
+      font-size: 16px;
+      color: #a78bfa;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-divider {
+      width: 80px; height: 3px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6);
+      margin: 0 auto 40px;
+      border-radius: 2px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-subtitle {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 60px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-badges {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 60px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-badge {
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.4);
+      color: #a78bfa;
+      padding: 6px 16px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cover-url {
+      color: #6366f1;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      position: relative; z-index: 1;
+    }
+
+    .cover-version {
+      color: #475569;
+      font-size: 11px;
+      margin-top: 12px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── CONTENT PAGES ── */
+    .page {
+      padding: 50px 60px;
+      page-break-after: always;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #6366f1;
+      padding-bottom: 16px;
+      margin-bottom: 36px;
+    }
+
+    .page-header-logo {
+      font-size: 18px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .page-header-section {
+      font-size: 11px;
+      color: #6366f1;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    h1 {
+      font-size: 30px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 32px 0 14px;
+      padding-left: 14px;
+      border-left: 4px solid #6366f1;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 20px 0 8px;
+    }
+
+    p { color: #374151; margin-bottom: 10px; line-height: 1.75; }
+
+    .intro-box {
+      background: linear-gradient(135deg, #f0f0ff, #faf5ff);
+      border: 1px solid #c7d2fe;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 28px;
+    }
+
+    .intro-box p { margin: 0; font-size: 14px; color: #3730a3; font-weight: 500; line-height: 1.7; }
+
+    /* ── FEATURE GRID ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .feature-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      border-top: 3px solid #6366f1;
+    }
+
+    .feature-card-icon {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+
+    .feature-card h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 6px;
+    }
+
+    .feature-card p {
+      font-size: 11.5px;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 24px 0;
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 10px;
+      padding: 18px 14px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: #94a3b8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ── MODULE SECTION ── */
+    .module-section {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin: 16px 0;
+      border-left: 4px solid #6366f1;
+    }
+
+    .module-section h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      margin: 0 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .module-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .module-list li {
+      font-size: 12px;
+      color: #475569;
+      padding: 5px 0;
+      padding-left: 20px;
+      position: relative;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .module-list li:last-child { border-bottom: none; }
+
+    .module-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #6366f1;
+      font-weight: 700;
+    }
+
+    /* ── ROLE TABLE ── */
+    .role-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 11.5px;
+    }
+
+    .role-table th {
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .role-table th:first-child { border-radius: 8px 0 0 0; }
+    .role-table th:last-child { border-radius: 0 8px 0 0; }
+
+    .role-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #374151;
+      vertical-align: top;
+    }
+
+    .role-table tr:nth-child(even) td { background: #f8fafc; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-purple { background: #ede9fe; color: #6d28d9; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-orange { background: #ffedd5; color: #c2410c; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+
+    /* ── PRICING ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .pricing-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 22px 18px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pricing-card.featured {
+      border-color: #6366f1;
+      border-width: 2px;
+      background: linear-gradient(135deg, #faf5ff, #f0f0ff);
+    }
+
+    .pricing-card.featured::before {
+      content: 'MOST POPULAR';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #6366f1;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 3px 12px;
+      border-radius: 100px;
+    }
+
+    .pricing-tier { font-size: 12px; font-weight: 700; color: #6366f1; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .pricing-price { font-size: 32px; font-weight: 900; color: #0f172a; }
+    .pricing-price span { font-size: 13px; font-weight: 400; color: #64748b; }
+    .pricing-desc { font-size: 11px; color: #64748b; margin: 8px 0 16px; }
+
+    .pricing-features { list-style: none; text-align: left; }
+    .pricing-features li {
+      font-size: 11px;
+      color: #374151;
+      padding: 5px 0;
+      padding-left: 18px;
+      position: relative;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .pricing-features li::before { content: '✓'; position: absolute; left: 0; color: #6366f1; font-weight: 700; }
+
+    /* ── STEP LIST ── */
+    .step-list { counter-reset: steps; margin: 16px 0; }
+
+    .step {
+      counter-increment: steps;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      min-width: 32px; height: 32px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-num::before { content: counter(steps); }
+
+    .step-content h3 { margin: 0 0 4px; font-size: 13px; color: #1e293b; }
+    .step-content p { margin: 0; font-size: 11.5px; color: #64748b; }
+
+    /* ── COMPARISON TABLE ── */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      margin: 16px 0;
+    }
+
+    .compare-table th {
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .compare-table th:first-child { text-align: left; color: #374151; }
+    .compare-table th:nth-child(2) { background: #f1f5f9; color: #64748b; border-radius: 8px 8px 0 0; }
+    .compare-table th:nth-child(3) { background: #6366f1; color: #fff; border-radius: 8px 8px 0 0; }
+
+    .compare-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      text-align: center;
+    }
+
+    .compare-table td:first-child { text-align: left; color: #374151; font-weight: 500; }
+    .compare-table td:nth-child(2) { background: #f8fafc; color: #94a3b8; }
+    .compare-table td:nth-child(3) { background: #faf5ff; color: #6d28d9; font-weight: 700; }
+
+    .check { color: #16a34a; font-weight: 700; font-size: 14px; }
+    .cross { color: #dc2626; font-size: 14px; }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      .cover { min-height: 100vh; }
+      .page { page-break-after: always; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- COVER PAGE -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-logo">RepoFlow<span style="color:#8b5cf6;">AI</span></div>
+  <div class="cover-tagline">Intelligent Collateral Recovery Platform</div>
+  <div class="cover-divider"></div>
+  <div class="cover-title">Product Manual & Feature Guide</div>
+  <div class="cover-subtitle">
+    The modern, AI-powered alternative to legacy repossession management platforms.
+    Built for lenders, repo companies, and field agents who demand speed, compliance, and intelligence.
+  </div>
+  <div class="cover-badges">
+    <div class="cover-badge">AI-Powered</div>
+    <div class="cover-badge">Real-Time</div>
+    <div class="cover-badge">FDCPA Compliant</div>
+    <div class="cover-badge">Multi-Tenant</div>
+    <div class="cover-badge">Mobile-First</div>
+    <div class="cover-badge">Cloud-Native</div>
+  </div>
+  <div class="cover-url">🌐 repoflowai.online</div>
+  <div class="cover-version">Version 1.0 · Confidential & Proprietary · © 2026 RepoFlow AI</div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 1: EXECUTIVE SUMMARY -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-logo">RepoFlowAI</div>
+    <div class="page-header-section">Executive Summary</div>
+  </div>
+
+  <h1>The Future of <span>Collateral Recovery</span> is Here</h1>
+  <p style="color:#64748b; font-size:13px; margin-bottom:24px;">A complete end-to-end platform for modern vehicle repossession operations</p>
+
+  <div class="intro-box">
+    <p>RepoFlow AI is a production-ready, enterprise-grade SaaS platform that modernizes vehicle repossession, collateral recovery, borrower communication, and lender visibility through AI-powered automation. It replaces outdated, clunky legacy systems with a fast, intelligent, and beautiful platform built for 2026 and beyond.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-number">10+</div>
+      <div class="stat-label">Core Modules</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">5</div>
+      <div class="stat-label">User Roles</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">AI</div>
+      <div class="stat-label">Powered Engine</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Cloud Native</div>
+    </div>
+  </div>
+
+  <h2>Who Is This For?</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-card-icon">🏦</div>
+      <h3>Lenders & Banks</h3>
+      <p>Auto lenders, credit unions, and finance companies that need real-time visibility into their collateral recovery pipeline and borrower account status.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🏢</div>
+      <h3>Repo Companies</h3>
+      <p>Repossession agencies and collateral recovery firms managing large fleets of field agents, assignments, and compliance documentation.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🚗</div>
+      <h3>Field Agents</h3>
+      <p>Repo agents in the field who need fast access to assignment details, GPS check-ins, photo uploads, and recovery reporting from their mobile devices.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">👤</div>
+      <h3>Borrowers</h3>
+      <p>Vehicle owners who need a clear, respectful, and secure portal to understand their account status, make payment arrangements, and communicate.</p>
+    </div>
+  </div>
+
+  <h2>The Problem We Solve</h2>
+  <p>Legacy repossession management software is slow, expensive, difficult to use, and built on outdated technology. RepoFlow AI delivers a modern, mobile-first, AI-assisted alternative that dramatically reduces recovery time, improves agent accountability, and gives lenders unprecedented real-time visibility — all in one unified platform.</p>
+
+  <div class="page-footer">
+    <span>repoflowai.online</span>
+    <span>Page 1 · RepoFlow AI Product Manual</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 2: COMPLETE FEATURE LIST -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-logo">RepoFlowAI</div>
+    <div class="page-header-section">Complete Feature List</div>
+  </div>
+
+  <h1>Everything <span>Included</span></h1>
+  <p style="color:#64748b; margin-bottom:24px;">Every feature listed below is fully built, production-ready, and live on your platform today.</p>
+
+  <div class="module-section">
+    <h3>📊 Operations Dashboard</h3>
+    <ul class="module-list">
+      <li>Real-time recovery metrics with live stat counters (active assignments, recovered today, recovery rate, revenue)</li>
+      <li>Live activity feed showing the most recent system-wide actions</li>
+      <li>Priority queue showing highest-urgency assignments at a glance</li>
+      <li>Animated KPI cards with trend indicators</li>
+      <li>Dark-mode, glassmorphism-styled enterprise UI</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>📋 Assignment Management</h3>
+    <ul class="module-list">
+      <li>Create, view, update, and close repossession assignments</li>
+      <li>Full status lifecycle: New → Assigned → In Progress → Located → Contact Made → Recovered → Closed</li>
+      <li>Priority scoring (1–10) with intelligent queue ordering</li>
+      <li>Attach vehicle info, borrower info, loan details, and special instructions</li>
+      <li>Filter and search assignments by status, agent, date, and priority</li>
+      <li>Assign/reassign agents to active cases</li>
+      <li>Set due dates with overdue tracking</li>
+      <li>Voluntary surrender workflow support</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>🤖 AI Intelligence Engine</h3>
+    <ul class="module-list">
+      <li>AI Recovery Probability Scoring (0–100) powered by GPT-4o-mini</li>
+      <li>Predictive scoring factors: time-of-day, agent performance, location intelligence, asset type</li>
+      <li>AI Document & Image Extraction using GPT-4o Vision — automatically extracts VIN, Make, Model, Color, License Plate from field photos</li>
+      <li>Recovery probability trend charts and analytics dashboard</li>
+      <li>AI-generated agent performance recommendations</li>
+      <li>Time-of-day optimization analysis for recovery scheduling</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>👷 Agent Fleet Management</h3>
+    <ul class="module-list">
+      <li>Full agent registry with license, certification, and service area tracking</li>
+      <li>Real-time GPS location tracking and last-known-position logging</li>
+      <li>Agent availability status (Available / Unavailable toggle)</li>
+      <li>Performance metrics: total recoveries, recovery rate, star rating</li>
+      <li>Vehicle info and certification records per agent</li>
+      <li>GPS event history with partitioned time-series storage</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>📱 Agent Mobile App (PWA)</h3>
+    <ul class="module-list">
+      <li>Mobile-first Progressive Web App installable on any smartphone</li>
+      <li>Bottom navigation bar optimized for one-handed field use</li>
+      <li>Active nearby assignment list with priority indicators</li>
+      <li>One-tap media upload (photos, videos, voice notes, documents)</li>
+      <li>GPS check-in with automatic address resolution</li>
+      <li>Recovery reporting form with vehicle condition fields</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>📁 Media & Documentation</h3>
+    <ul class="module-list">
+      <li>Upload photos, videos, voice notes, and documents per assignment</li>
+      <li>GPS coordinates and timestamp stamped on every upload</li>
+      <li>AI auto-extraction of vehicle data from uploaded images</li>
+      <li>AI confidence scoring on all extracted data</li>
+      <li>Media archive and search per assignment</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>💬 Messaging Center</h3>
+    <ul class="module-list">
+      <li>Secure in-app messaging between lenders, agents, and managers</li>
+      <li>Assignment-linked conversations for full context</li>
+      <li>Message status tracking (Sent, Delivered, Read)</li>
+      <li>Attachment support within messages</li>
+      <li>Message archive per organization</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>🔒 Compliance & Audit Engine</h3>
+    <ul class="module-list">
+      <li>Immutable audit log — every action in the system is recorded and cannot be altered</li>
+      <li>Full before/after data snapshots on every record change</li>
+      <li>Searchable compliance log by user, resource type, date range</li>
+      <li>SOC2-ready audit trail architecture</li>
+      <li>FDCPA-compliant communication and documentation workflows</li>
+      <li>Organization-scoped data isolation via Row Level Security</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>👤 Borrower Self-Service Portal</h3>
+    <ul class="module-list">
+      <li>Secure branded portal for borrowers to view their account status</li>
+      <li>Past-due balance display and redemption amount visibility</li>
+      <li>Vehicle status and assignment progress tracking</li>
+      <li>Voluntary surrender scheduling workflow</li>
+      <li>Payment request submission</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>💳 Payment Management</h3>
+    <ul class="module-list">
+      <li>Track reinstatement, redemption, storage, and other payment types</li>
+      <li>Payment approval workflow (Pending → Approved → Completed)</li>
+      <li>Borrower payment request submission from the self-service portal</li>
+      <li>Full payment history per assignment and borrower</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>🏢 Multi-Tenant Organization System</h3>
+    <ul class="module-list">
+      <li>Complete organization isolation — each lender/repo company is a separate tenant</li>
+      <li>Subscription tiers: Starter, Professional, Enterprise</li>
+      <li>Configurable agent and assignment limits per organization</li>
+      <li>Custom branding (logo, primary color) per organization</li>
+    </ul>
+  </div>
+
+  <div class="page-footer">
+    <span>repoflowai.online</span>
+    <span>Page 2 · RepoFlow AI Product Manual</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 3: USER ROLES & ACCESS -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-logo">RepoFlowAI</div>
+    <div class="page-header-section">User Roles & Access Control</div>
+  </div>
+
+  <h1>Built for <span>Every Stakeholder</span></h1>
+  <p style="color:#64748b; margin-bottom:24px;">RepoFlow AI features five distinct user roles, each with tailored access and a dedicated experience.</p>
+
+  <table class="role-table">
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th>Who They Are</th>
+        <th>What They Can Do</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="badge badge-purple">Administrator</span></td>
+        <td>Platform superuser</td>
+        <td>Full access to all features, all organizations, all data. Manages system configuration, users, and billing.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">Lender</span></td>
+        <td>Auto lender / bank staff</td>
+        <td>Creates and manages assignments, views borrower accounts, monitors recovery progress, approves payments, accesses analytics.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-orange">Repo Manager</span></td>
+        <td>Recovery operations manager</td>
+        <td>Manages agent fleet, assigns cases, reviews uploads, runs compliance reports, accesses full dashboard.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">Repo Agent</span></td>
+        <td>Field recovery agent</td>
+        <td>Views their assigned cases, uploads media, submits GPS check-ins, files recovery reports via mobile app.</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-gray">Borrower</span></td>
+        <td>Vehicle owner / account holder</td>
+        <td>Views their account status, past-due balance, vehicle status, submits payment requests, schedules voluntary surrender.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>How to Use the Platform</h2>
+
+  <div class="step-list">
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Create Your Organization & Admin Account</h3>
+        <p>Register at repoflowai.online. Your account is set as Administrator by default. Set up your organization name, branding, and subscription tier from the Settings panel.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Invite Your Team</h3>
+        <p>Add lenders, repo managers, and field agents by sending invitation emails. Assign them the appropriate role for their access level. Each user gets a tailored dashboard based on their role.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Add Borrowers & Vehicles</h3>
+        <p>Import or manually enter borrower profiles (name, contact info, SSN last 4, employment). Register vehicles with VIN, make, model, year, color, and lienholder information.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Create a Repossession Assignment</h3>
+        <p>Link a borrower and vehicle to a new assignment. Set the loan balance, priority level, due date, special instructions, and assign a field agent. The system calculates an AI recovery probability score automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Field Agent Works the Case</h3>
+        <p>The assigned agent sees the case in their mobile app. They perform GPS check-ins, upload field photos (AI auto-extracts vehicle data), and update the assignment status as they progress.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Recovery & Close-Out</h3>
+        <p>When a vehicle is recovered, the agent files a recovery report with location, condition, mileage, and impound information. The assignment moves to "Recovered" status. Lender is notified in real time.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num"></div>
+      <div class="step-content">
+        <h3>Review Analytics & Compliance</h3>
+        <p>Managers and lenders review AI-powered recovery analytics, agent performance dashboards, and the immutable audit log to ensure full compliance and operational visibility.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>repoflowai.online</span>
+    <span>Page 3 · RepoFlow AI Product Manual</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 4: VS COMPETITION + PRICING -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-logo">RepoFlowAI</div>
+    <div class="page-header-section">Competitive Advantage & Pricing</div>
+  </div>
+
+  <h1>RepoFlow AI vs <span>Legacy Platforms</span></h1>
+  <p style="color:#64748b; margin-bottom:20px;">See how RepoFlow AI stacks up against traditional repossession management software like RDN.</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Legacy Platforms (RDN, etc.)</th>
+        <th>✦ RepoFlow AI</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AI Recovery Probability Scoring</td>
+        <td class="cross">✗ Not Available</td>
+        <td class="check">✓ Built-in GPT-4o</td>
+      </tr>
+      <tr>
+        <td>AI Image/Document Extraction</td>
+        <td class="cross">✗ Manual Entry Only</td>
+        <td class="check">✓ Automatic via Vision AI</td>
+      </tr>
+      <tr>
+        <td>Mobile Agent PWA App</td>
+        <td class="cross">✗ Desktop-Only or Clunky App</td>
+        <td class="check">✓ Installable Mobile App</td>
+      </tr>
+      <tr>
+        <td>Real-Time GPS Tracking</td>
+        <td class="cross">✗ Manual Updates</td>
+        <td class="check">✓ Live GPS Events</td>
+      </tr>
+      <tr>
+        <td>Borrower Self-Service Portal</td>
+        <td class="cross">✗ Not Available</td>
+        <td class="check">✓ Branded Portal</td>
+      </tr>
+      <tr>
+        <td>Immutable Audit Logs</td>
+        <td class="cross">✗ Basic Logging</td>
+        <td class="check">✓ Trigger-Based Immutable Ledger</td>
+      </tr>
+      <tr>
+        <td>Multi-Tenant Architecture</td>
+        <td class="cross">✗ Siloed Systems</td>
+        <td class="check">✓ Full Org Isolation via RLS</td>
+      </tr>
+      <tr>
+        <td>Modern UI/UX Design</td>
+        <td class="cross">✗ Dated, Hard to Use</td>
+        <td class="check">✓ Premium Dark Mode UI</td>
+      </tr>
+      <tr>
+        <td>Cloud-Native Infrastructure</td>
+        <td class="cross">✗ Legacy Servers</td>
+        <td class="check">✓ Vercel + Supabase Edge</td>
+      </tr>
+      <tr>
+        <td>Analytics Dashboard</td>
+        <td class="cross">✗ Basic Reports</td>
+        <td class="check">✓ AI-Powered Predictions</td>
+      </tr>
+      <tr>
+        <td>Setup Time</td>
+        <td class="cross">✗ Weeks / Months</td>
+        <td class="check">✓ Same Day</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Pricing Tiers</h2>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-price">$199<span>/mo</span></div>
+      <div class="pricing-desc">Perfect for small repo shops getting started</div>
+      <ul class="pricing-features">
+        <li>Up to 10 Agents</li>
+        <li>Up to 1,000 Assignments/mo</li>
+        <li>Full Dashboard Access</li>
+        <li>Mobile Agent App</li>
+        <li>Basic Audit Logs</li>
+        <li>Email Support</li>
+      </ul>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-tier">Professional</div>
+      <div class="pricing-price">$499<span>/mo</span></div>
+      <div class="pricing-desc">For growing repo companies and mid-size lenders</div>
+      <ul class="pricing-features">
+        <li>Up to 50 Agents</li>
+        <li>Unlimited Assignments</li>
+        <li>AI Scoring & Extraction</li>
+        <li>Borrower Portal</li>
+        <li>Advanced Analytics</li>
+        <li>GPS Fleet Tracking</li>
+        <li>Priority Support</li>
+      </ul>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-tier">Enterprise</div>
+      <div class="pricing-price">Custom<span> pricing</span></div>
+      <div class="pricing-desc">For large lenders and national repo networks</div>
+      <ul class="pricing-features">
+        <li>Unlimited Agents</li>
+        <li>Unlimited Assignments</li>
+        <li>All AI Features</li>
+        <li>Custom Integrations</li>
+        <li>Dedicated Account Manager</li>
+        <li>SLA Guarantee</li>
+        <li>White-Label Option</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Security & Compliance</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-card-icon">🔐</div>
+      <h3>Row Level Security</h3>
+      <p>PostgreSQL RLS ensures each organization's data is completely isolated. No cross-tenant data leakage is possible at the database level.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">📜</div>
+      <h3>Immutable Audit Logs</h3>
+      <p>Every action triggers an immutable database record. Your audit trail can never be altered, deleted, or tampered with.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🔑</div>
+      <h3>JWT Authentication</h3>
+      <p>All sessions are secured with industry-standard JSON Web Tokens via Supabase Auth. Passwords are bcrypt-hashed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🌐</div>
+      <h3>SSL / HTTPS Everywhere</h3>
+      <p>All traffic is encrypted in transit via TLS. Vercel and Supabase both enforce HTTPS-only connections.</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>repoflowai.online</span>
+    <span>Page 4 · RepoFlow AI Product Manual</span>
+    <span>Confidential</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 5: GETTING STARTED & CONTACT -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" style="page-break-after: auto;">
+  <div class="page-header">
+    <div class="page-header-logo">RepoFlowAI</div>
+    <div class="page-header-section">Getting Started</div>
+  </div>
+
+  <h1>Get Started in <span>Minutes</span></h1>
+  <p style="color:#64748b; margin-bottom:24px;">RepoFlow AI is fully cloud-hosted and requires zero installation. You can be operational today.</p>
+
+  <div class="intro-box">
+    <p>🚀 <strong>Live Platform:</strong> repoflowai.online &nbsp;|&nbsp; <strong>Email:</strong> admin@repoflowai.online &nbsp;|&nbsp; <strong>Support:</strong> Available via the in-app messaging system</p>
+  </div>
+
+  <h2>Quick Start Checklist</h2>
+
+  <div class="module-section">
+    <h3>✅ For Lenders / Repo Companies (Admin Setup)</h3>
+    <ul class="module-list">
+      <li>Register your account at repoflowai.online/register</li>
+      <li>Configure your organization name and branding in Settings</li>
+      <li>Invite your repo managers and lender staff via email</li>
+      <li>Import or add your borrower and vehicle records</li>
+      <li>Create your first repossession assignment</li>
+      <li>Assign a field agent and monitor progress from the dashboard</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>✅ For Field Agents (Mobile Setup)</h3>
+    <ul class="module-list">
+      <li>Accept your invitation email and create your account</li>
+      <li>Open repoflowai.online on your phone browser</li>
+      <li>Tap "Add to Home Screen" to install as a native-like app</li>
+      <li>Log in and view your assigned cases immediately</li>
+      <li>Use the Upload button to submit field photos with GPS auto-tagging</li>
+      <li>Update assignment status as you progress through the recovery</li>
+    </ul>
+  </div>
+
+  <div class="module-section">
+    <h3>✅ For Borrowers (Self-Service Portal)</h3>
+    <ul class="module-list">
+      <li>Receive access link from your lender</li>
+      <li>Log into repoflowai.online/borrower to view your account</li>
+      <li>Check your vehicle status, past-due amount, and redemption amount</li>
+      <li>Submit a payment request or schedule a voluntary surrender</li>
+      <li>Communicate securely with your lender through the messaging portal</li>
+    </ul>
+  </div>
+
+  <h2>Technology Stack</h2>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-card-icon">⚡</div>
+      <h3>Next.js 15 + TypeScript</h3>
+      <p>Built on the industry-leading React framework for maximum performance, SEO, and developer velocity.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🗄️</div>
+      <h3>Supabase + PostgreSQL</h3>
+      <p>Enterprise-grade relational database with real-time subscriptions, Row Level Security, and automatic backups.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🧠</div>
+      <h3>OpenAI GPT-4o</h3>
+      <p>Powers AI document extraction, recovery probability scoring, and operational intelligence recommendations.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-card-icon">🌍</div>
+      <h3>Vercel Edge Network</h3>
+      <p>Deployed globally on Vercel's edge network for sub-100ms response times anywhere in the world.</p>
+    </div>
+  </div>
+
+  <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 14px; padding: 30px; text-align: center; margin-top: 32px;">
+    <div style="font-size: 22px; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">Ready to Modernize Your Recovery Operations?</div>
+    <div style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Join the future of collateral recovery. Get started today — no credit card required.</div>
+    <div style="font-size: 18px; font-weight: 700; color: #6366f1;">🌐 repoflowai.online</div>
+  </div>
+
+  <div class="page-footer">
+    <span>repoflowai.online</span>
+    <span>Page 5 · RepoFlow AI Product Manual</span>
+    <span>© 2026 RepoFlow AI · All Rights Reserved</span>
+  </div>
+</div>
+
+</body>
+</html>
