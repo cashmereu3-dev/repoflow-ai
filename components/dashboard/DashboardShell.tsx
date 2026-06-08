@@ -62,17 +62,21 @@ export default function DashboardShell({ children, profile, user }: DashboardShe
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className={`flex items-center gap-3 px-4 py-5 border-b border-[hsl(var(--border))] ${collapsed ? 'justify-center' : ''}`}>
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center flex-shrink-0">
-          <Zap className="w-4 h-4 text-white" />
-        </div>
+        {org?.logo_url ? (
+          <img src={org.logo_url as string} alt="Organization Logo" className="w-8 h-8 object-contain bg-white rounded-lg p-0.5" />
+        ) : (
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center flex-shrink-0">
+            <Zap className="w-4 h-4 text-white" />
+          </div>
+        )}
         {!collapsed && (
           <div className="min-w-0">
-            <div className="font-bold text-sm text-white truncate">RepoFlow AI</div>
-            {org && (
-              <div className="text-xs truncate" style={{ color: 'hsl(215,20%,50%)' }}>
-                {org.name as string}
-              </div>
-            )}
+            <div className="font-bold text-sm text-white truncate">
+              {org?.name ? (org.name as string) : 'RepoFlow AI'}
+            </div>
+            <div className="text-xs truncate" style={{ color: 'hsl(215,20%,50%)' }}>
+              {org?.name ? 'Collateral Recovery' : (org?.name as string)}
+            </div>
           </div>
         )}
       </div>
