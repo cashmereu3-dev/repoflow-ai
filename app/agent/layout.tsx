@@ -3,6 +3,9 @@ import { Home, ListTodo, Upload } from 'lucide-react'
 
 export const metadata = {
   title: 'Agent Dashboard',
+}
+
+export const viewport = {
   themeColor: '#000000',
 }
 
